@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Countdown Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 300px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        #timer {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #timer-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Countdown Timer</h1>
+        <input type="number" id="timer-input" placeholder="Enter time in seconds">
+        <div id="timer">00:00</div>
+        <div id="buttons">
+            <button id="startButton">Start</button>
+            <button id="stopButton">Stop</button>
+            <button id="resetButton">Reset</button>
+        </div>
+    </div>
+    <script>
+        let timerInterval;
+        let countdown = 0; 
+        let isRunning = false;
+
+        const timerDisplay = document.getElementById('timer');
+        const timerInput = document.getElementById('timer-input');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const resetButton = document.getElementById('resetButton');
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            timerDisplay.textContent = formatTime(countdown);
+        }
+
+        startButton.addEventListener('click', () => {
+            if (!isRunning && countdown > 0) {
+                isRunning = true;
+                startButton.disabled = true;
+                timerInput.disabled = true;
+                stopButton.disabled = false;
+                resetButton.disabled = true;
+
+                timerInterval = setInterval(() => {
+                    countdown--;
+                    updateTimer();
+
+                    if (countdown === 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        startButton.disabled = false;
+                        timerInput.disabled = false;
+                        stopButton.disabled = true;
+                        resetButton.disabled = false;
+                    }
+                }, 1000);
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                startButton.disabled = false;
+                timerInput.disabled = false;
+                stopButton.disabled = true;
+                resetButton.disabled = false;
+            }
+        });
+
+        resetButton.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            isRunning = false;
+            countdown = parseInt(timerInput.value) || 0; 
+            updateTimer();
+            startButton.disabled = false;
+            timerInput.disabled = false;
+            stopButton.disabled = true;
+            resetButton.disabled = true;
+        });
+
+        timerInput.addEventListener('input', () => {
+           
+            if (!isRunning) {
+                countdown = parseInt(timerInput.value) || 0;
+                updateTimer();
+            }
+        });
+
+        
+        updateTimer();
+        stopButton.disabled = true;
+    </script>
+</body>
+</html>
